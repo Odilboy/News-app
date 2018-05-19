@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Retrofit retrofit = new Retrofit.Builder()
+  /*      Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://newsapi.org/")
                 .build();
@@ -55,11 +55,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
+*/
+
+        NewsApi service = RetrofitClientInstance.getRetrofitInstance().create(NewsApi.class);
+        Call<List<News>> call = service.getNewsList();
+        call.enqueue(new Callback<List<News>>() {
+            @Override
+            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
+                generateDataList(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<News>> call, Throwable t) {
+
+                Toast.makeText(MainActivity.this, "wrong", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+      /*  recyclerView = findViewById(R.id.recyclerview1);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        newsAdapter = new NewsAdapter(this, newsArrayList);
+        recyclerView.setAdapter(newsAdapter); */
+
+    }
+
+    public void generateDataList(List<News> news)
+    {
         recyclerView = findViewById(R.id.recyclerview1);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         newsAdapter = new NewsAdapter(this, newsArrayList);
         recyclerView.setAdapter(newsAdapter);
-
     }
 }
