@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -30,36 +31,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("https://newsapi.org/")
-                .build();
-        NewsApi service = retrofit.create(NewsApi.class);
-        Call<List<News>> repos = service.getNewsList(newsArrayList);
-        repos.enqueue(new Callback<List<News>>() {
+
+        NewsApi service = RetrofitClientInstance.getRetrofitInstance().create(NewsApi.class);
+        Call<NewsResponse> call = service.getNewsList();
+        call.enqueue(new Callback<NewsResponse>() {
             @Override
-            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-                List<News> news = (List<News>) response.body();
-                Toast.makeText(MainActivity.this, "OK", Toast.LENGTH_SHORT).show();
-
-
+            public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
+                NewsResponse newsResponse = response.body();
+                initRecycleView(newsResponse.newsList);
             }
 
             @Override
-            public void onFailure(Call<List<News>> call, Throwable t) {
+            public void onFailure(Call<NewsResponse> call, Throwable t) {
 
-                Toast.makeText(MainActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("Error", t.getMessage());
 
             }
         });
 
 
-
+    }
+    private void initRecycleView(ArrayList<News> news)
+    {
         recyclerView = findViewById(R.id.recyclerview1);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        newsAdapter = new NewsAdapter(this, newsArrayList);
+        newsAdapter = new NewsAdapter(this, news);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(newsAdapter);
-
     }
 }

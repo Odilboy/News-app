@@ -7,6 +7,6 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface NewsApi {
-    @GET("top-headlines?country=us&category=business&apiKey=cdbeeeeed1004851afafb5dfc325a86d")
-    Call<List<News>> getNewsList(ArrayList<News> newsArrayList);
+    @GET("v2/top-headlines?country=us&apiKey=cdbeeeeed1004851afafb5dfc325a86d")
+    Call<NewsResponse> getNewsList();
 }
