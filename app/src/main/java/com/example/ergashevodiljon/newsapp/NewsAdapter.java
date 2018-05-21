@@ -21,11 +21,16 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
     private Context context;
     private ArrayList<News> newsArrayList;
     private LayoutInflater mInflater;
+    News news;
 
     public NewsAdapter(Context context, ArrayList<News> newsArrayList) {
         this.context = context;
         this.newsArrayList = newsArrayList;
+
     }
+
+
+
 
     @NonNull
     @Override
