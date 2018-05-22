@@ -1,73 +1,63 @@
 package com.example.ergashevodiljon.newsapp;
 
-import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NewsAdapter.ItemClickListener{
 
     RecyclerView recyclerView;
-
-    RecyclerView.LayoutManager layoutManager;
     NewsAdapter newsAdapter;
-    NewsApi apiInterface;
-
-    private ArrayList<News> newsArrayList = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         NewsApi service = RetrofitClientInstance.getRetrofitInstance().create(NewsApi.class);
-        Call<List<News>> call = service.getNewsList();
-        call.enqueue(new Callback<List<News>>() {
+        Call<NewsResponse> call = service.getNewsList();
+        call.enqueue(new Callback<NewsResponse>() {
             @Override
-            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-                generateDataList((ArrayList<News>) response.body());
-
+            public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
+                NewsResponse newsResponse = response.body();
+                initRecycleView(newsResponse.newsList);
             }
 
             @Override
-            public void onFailure(Call<List<News>> call, Throwable t) {
+            public void onFailure(Call<NewsResponse> call, Throwable t) {
 
-                Toast.makeText(MainActivity.this, "wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("Error", t.getMessage());
 
             }
         });
 
 
     }
+    @Override
+    public void onItemClick(View view, int position) {
+        Intent i = new Intent(getApplicationContext(), SecondActivity.class);
+        startActivity(i);
+        setContentView(R.layout.read_news);
+        Toast.makeText(this, "You clicked", Toast.LENGTH_SHORT).show();
+    }
 
-    public void generateDataList(ArrayList<News> news)
+    private void initRecycleView(ArrayList<News> news)
     {
-
         recyclerView = findViewById(R.id.recyclerview1);
-        newsAdapter = new NewsAdapter(this,news);
+        newsAdapter = new NewsAdapter(this, news);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(newsAdapter);
-
-
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //newsAdapter = new NewsAdapter(this, newsArrayList);
-        //recyclerView.setAdapter(newsAdapter);
+        newsAdapter.setClickListener(this);
     }
 }

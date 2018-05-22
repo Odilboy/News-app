@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -21,16 +22,15 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
     private Context context;
     private ArrayList<News> newsArrayList;
     private LayoutInflater mInflater;
-    News news;
+    private ItemClickListener mClickListener;
+
 
     public NewsAdapter(Context context, ArrayList<News> newsArrayList) {
         this.context = context;
         this.newsArrayList = newsArrayList;
+        mInflater = LayoutInflater.from(context);
 
     }
-
-
-
 
     @NonNull
     @Override
@@ -43,10 +43,19 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         News news = newsArrayList.get(position);
 
-        holder.date.setText(news.getDate());
-        holder.author.setText(news.getAuthorName());
-        holder.description.setText(news.getDescription());
+        holder.date.setText(news.getDate().substring(0, 10));
+        if (news.getAuthorName() != null && news.getAuthorName().length() > 32) {
+            holder.author.setText(news.getAuthorName().substring(0, 32));
+        } else {
+            holder.author.setText(news.getAuthorName());
+        }
+        if(news.getDescription().length()>80){
+            holder.description.setText(news.getDescription().substring(0, 80));
+        } else {
+            holder.description.setText(news.getDescription());
+        }
         Glide.with(context).load(news.getImageUrl()).into(holder.imageView);
+
 
     }
 
@@ -55,7 +64,7 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         return newsArrayList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.date)
         TextView date;
         @BindView(R.id.author)
@@ -70,6 +79,21 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
             super(itemView);
 
             ButterKnife.bind(this,itemView);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+        }
+    }
+
+    // allows clicks events to be caught
+    void setClickListener(ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
+    }
+
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 }
