@@ -13,7 +13,7 @@ public class SecondActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.read_news);
         webView = findViewById(R.id.web_view);
-        webView.loadUrl("https://www.hrupin.com/2012/08/how-to-open-activity-by-android-webview-hyperlink-click-or-how-to-handle-hyperlink-click-in-android-webview");
+        webView.loadUrl(getIntent().getStringExtra("data"));
         webView.setWebViewClient(new MyWebViewClient(this));
     }
 }
