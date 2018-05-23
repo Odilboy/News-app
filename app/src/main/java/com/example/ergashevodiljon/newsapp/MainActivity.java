@@ -46,9 +46,10 @@ public class MainActivity extends AppCompatActivity implements NewsAdapter.ItemC
     @Override
     public void onItemClick(View view, int position) {
         Intent i = new Intent(getApplicationContext(), SecondActivity.class);
+        i.putExtra("data", newsAdapter.getUrl(position));
         startActivity(i);
         setContentView(R.layout.read_news);
-        Toast.makeText(this, "You clicked", Toast.LENGTH_SHORT).show();
+
     }
 
     private void initRecycleView(ArrayList<News> news)
