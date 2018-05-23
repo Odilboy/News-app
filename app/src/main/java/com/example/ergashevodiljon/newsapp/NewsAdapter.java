@@ -49,7 +49,7 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         } else {
             holder.author.setText(news.getAuthorName());
         }
-        if(news.getDescription().length()>80){
+        if(news.getDescription() != null && news.getDescription().length()>80){
             holder.description.setText(news.getDescription().substring(0, 80));
         } else {
             holder.description.setText(news.getDescription());
@@ -86,6 +86,12 @@ public class NewsAdapter  extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         public void onClick(View view) {
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
         }
+    }
+
+    public String getUrl(int position) {
+
+        return newsArrayList.get(position).getUrl();
+
     }
 
     // allows clicks events to be caught
