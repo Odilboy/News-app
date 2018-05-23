@@ -13,12 +13,21 @@ public class News {
     @SerializedName("author")
     private String authorName;
     private String description;
+    private String url;
 
     public News(String date, String imageUrl, String authorName, String description) {
         this.date = date;
         this.imageUrl = imageUrl;
         this.authorName = authorName;
         this.description = description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getDate() {
